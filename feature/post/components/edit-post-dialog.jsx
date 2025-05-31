@@ -4,7 +4,6 @@
 
 import { useState, useRef } from "react";
 import {
-  Input,
   Textarea,
   Label,
   Button,
@@ -18,16 +17,12 @@ import { Image, X } from "lucide-react";
 import { updatePost } from "../services/post-service";
 
 const EditPostDialog = ({ post, setPosts, posts, isOpen, onClose }) => {
-  const [formData, setFormData] = useState(post);
-  const [image, setImage] = useState();
+  const [formData, setFormData] = useState({ content: post.content, image: post.image });
+  const [image, setImage] = useState(null); // Yalnız yeni seçilən şəkil
   const fileInputRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    console.log({
-      [name]: value,
-    });
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -36,16 +31,13 @@ const EditPostDialog = ({ post, setPosts, posts, isOpen, onClose }) => {
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    console.log("FILE", file)
     if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = (e) =>
-        setFormData((prev) => ({ ...prev, image: e.target.result }));
-
+        setFormData((prev) => ({ ...prev, image: { url: e.target.result } }));
       reader.readAsDataURL(file);
+      setImage(file);
     }
-    setImage(file);
-
   };
 
   const handleRemoveImage = () => {
@@ -55,19 +47,22 @@ const EditPostDialog = ({ post, setPosts, posts, isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const index = posts.findIndex((el) => post._id.includes(el._id));
 
-    const { data, success } = await updatePost(post._id, formData);
+    const index = posts.findIndex((el) => post._id === el._id);
+    const form = new FormData();
 
-    if (success) {
-      console.log({ success, data });
-      posts[index] = data;
+    form.append("content", formData.content);
+    if (image) {
+      form.append("image", image); // Yalnız yeni şəkil varsa göndər
     }
 
-    console.log({ index, post });
-    setPosts([...posts, { ...formData }]);
-    onClose();
+    const { data, success } = await updatePost(post._id, form);
+
+    if (success) {
+      posts[index] = data;
+      setPosts([...posts]);
+      onClose();
+    }
   };
 
   return (
@@ -89,16 +84,13 @@ const EditPostDialog = ({ post, setPosts, posts, isOpen, onClose }) => {
                 required
               />
             </div>
+
             <div className="grid gap-2">
               <Label>Image</Label>
-              {image || formData?.image?.url ? (
+              {formData.image?.url ? (
                 <div className="relative">
                   <img
-                    src={
-                      image ? URL.createObjectURL(image) : formData.image.url
-
-                    }
-                    // src={formData.image.url || "/placeholder.svg"}
+                    src={formData.image.url}
                     alt="Post image"
                     className="max-w-full h-72 rounded-lg"
                   />
@@ -133,7 +125,7 @@ const EditPostDialog = ({ post, setPosts, posts, isOpen, onClose }) => {
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" >Save changes</Button>
+            <Button type="submit">Save changes</Button>
           </DialogFooter>
         </form>
       </DialogContent>

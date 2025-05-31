@@ -8,6 +8,7 @@ import CreatePost from "./create-post";
 import EditPostDialog from "./edit-post-dialog";
 import DeleteConfirmDialog from "./delete-confirm-dialog";
 import { deletePost, getPosts } from "../services/post-service";
+import { postLike } from "../services/like-service";
 
 export default function PostLayout() {
   const currentUser = "Current User"; // This would typically come from an authentication system
@@ -86,7 +87,10 @@ export default function PostLayout() {
     setPostToDelete(null);
   };
 
-  const handleReact = (postId, user, reactionType) => {
+  const handleReact = async(postId, user, reactionType) => {
+    console.log({postId,  reactionType})
+
+    await postLike({type:reactionType},postId)
     setPosts(
       posts.map((post) =>
         post.id === postId

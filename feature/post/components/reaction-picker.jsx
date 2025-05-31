@@ -16,7 +16,10 @@ const reactions = [
   { emoji: "😠", name: "Angry" },
 ];
 
+
+
 const ReactionPicker = ({ onReact, currentReaction }) => {
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -34,7 +37,9 @@ const ReactionPicker = ({ onReact, currentReaction }) => {
               key={reaction.name}
               variant="ghost"
               size="sm"
-              onClick={() => onReact(reaction.name)}
+              onClick={() => {
+                onReact(reaction.name)
+              }}
               className="px-2">
               {reaction.emoji}
             </Button>

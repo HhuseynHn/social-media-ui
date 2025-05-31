@@ -43,7 +43,6 @@ export const postPost = async (body) => {
 };
 
 export const updatePost = async (params, body) => {
-  console.log("body", body)
   try {
     const response = await axiosInstance.put("/posts/" + params, body, {
       headers: {
@@ -51,7 +50,6 @@ export const updatePost = async (params, body) => {
       },
     });
     const data = response.data;
-    console.log('dataUpdte', data)
     return {
       data,
       success: true,

@@ -57,7 +57,7 @@ const Post = ({
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
 
   return (
-    <Card className="w-full max-w-2xl max-h-[500px] mb-4">
+    <Card className="w-full max-w-2xl max-h-[520px] mb-4">
       <CardHeader className="flex flex-row items-center gap-4">
         <Avatar>
           {user?.avatar?.url ? (
@@ -107,18 +107,22 @@ const Post = ({
         )}
       </CardContent>
       <Separator />
-      {/* <CardFooter className="flex flex-col items-start">
+       <CardFooter className="flex flex-col items-start justify-center">
         <div className="flex justify-between w-full mb-2">
           <ReactionPicker
-            onReact={(reactionType) => onReact(id, currentUser, reactionType)}
-            currentReaction={currentUserReaction}
+            onReact={(reactionType) =>{ 
+              onReact(_id, currentUser, reactionType)
+            }
+            }
+            // currentReaction={currentUserReaction}
           />
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setShowComments(!showComments)}>
             <MessageCircle className="mr-2 h-4 w-4" />
-            Comment ({comments.length})
+            Comment 
+            ({comments?.length})
           </Button>
           <Button
             variant="ghost"
@@ -128,7 +132,7 @@ const Post = ({
             Share
           </Button>
         </div>
-        {reactions.length > 0 && <LikeList likes={reactions} />}
+        {reactions?.length > 0 && <LikeList likes={reactions} />}
         {showComments && (
           <div className="w-full mt-2">
             {comments.map((comment, index) => (
@@ -149,7 +153,7 @@ const Post = ({
             />
           </div>
         )}
-      </CardFooter> */}
+      </CardFooter> 
       <ShareDialog
         isOpen={isShareDialogOpen}
         onClose={() => setIsShareDialogOpen(false)}
